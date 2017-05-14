@@ -43,6 +43,7 @@ EOF
 # Set an appropiate bootstrap_expect for Nomad
 sed -i 's/  bootstrap_expect = 1/  bootstrap_expect = ${cluster_size}/g' /etc/nomad.d/nomad-server.hcl
 
+# Fix Nomad Advertise Addresses
 cat <<EOF > /etc/nomad.d/nomad-advertise.hcl
 advertise {
   http = "$${IP_ADDR}"
@@ -54,3 +55,14 @@ EOF
 
 systemctl enable nomad
 service nomad start
+
+# Configure Vault to use Consul as Storage Backend
+cat <<EOF > /etc/vault.d/vault-consul.hcl
+storage "consul" {
+  address = "127.0.0.1:8500"
+  path    = "vault"
+}
+EOF
+
+systemctl enable vault
+service vault start
