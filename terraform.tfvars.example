@@ -1,0 +1,16 @@
+#An arbitrary string
+cluster_name = "ProductionCluster"
+#OS Name. RHEL or Ubuntu supported
+os = "RHEL"
+#OS Version. At the time of release 7.3 and 16.04 are supported respectively
+os_version = "7.3"
+#Name for a pre-existing SSH key in Amazon
+ssh_key_name = "my-ssh-key"
+#Subnet ID's to use, should be a list
+subnet_ids = ["subnet-0ab1cd2e"]
+#VPC to use
+vpc_id = "vpc-123abc45"
+#Product versions. Check existing AMIs for combination
+consul_version = "0.8.3"
+nomad_version  = "0.5.6"
+vault_version  = "0.7.2"
