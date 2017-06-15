@@ -7,6 +7,7 @@ module "images-aws" {
   nomad_version  = "${var.nomad_version}"
   vault_version  = "${var.vault_version}"
   consul_version = "${var.consul_version}"
+  region         = "${var.region}"
   os             = "${var.os}"
   os_version     = "${var.os_version}"
 }
