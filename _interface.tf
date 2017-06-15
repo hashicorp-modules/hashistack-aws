@@ -6,10 +6,12 @@ variable "cluster_name" {
 variable "os" {
   # case sensitive for AMI lookup
   description = "Operating System to use ie RHEL or Ubuntu"
+  default     = "RHEL"
 }
 
 variable "os_version" {
   description = "Operating System version to use ie 7.3 (for RHEL) or 16.04 (for Ubuntu)"
+  default     = "7.3"
 }
 
 variable "ssh_key_name" {
