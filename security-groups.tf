@@ -1,10 +1,10 @@
-resource "aws_security_group" "server" {
-  name        = "server-sg"
-  description = "Security Group for Server Instances"
+resource "aws_security_group" "hashistack_server" {
+  name        = "hashistack-server-sg"
+  description = "Security Group for HashiStack Server Instances"
   vpc_id      = "${var.vpc_id}"
 
   tags {
-    Name         = "Server (${var.cluster_name})"
+    Name    = "HashiStack Server (${var.cluster_name})"
     Cluster = "${replace(var.cluster_name, " ", "")}"
   }
 

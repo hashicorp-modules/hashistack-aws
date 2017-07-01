@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
-data "aws_iam_policy_document" "server" {
+data "aws_iam_policy_document" "hashistack_server" {
   statement {
     sid       = "AllowSelfAssembly"
     effect    = "Allow"

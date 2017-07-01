@@ -1,16 +1,25 @@
-#An arbitrary string
-cluster_name = "ProductionCluster"
-#OS Name. RHEL or Ubuntu supported
+# Auto Scaling Group Cluster Name
+cluster_name = "my-prod-cluster"
+
+# Environment Name (tagged to all instances)
+environment_name = "my-env"
+
+# Operating System to use ie RHEL or Ubuntu
 os = "RHEL"
-#OS Version. At the time of release 7.3 and 16.04 are supported respectively
+
+# Operating System version to use ie 7.3 (for RHEL) or 16.04 (for Ubuntu)
 os_version = "7.3"
-#Name for a pre-existing SSH key in Amazon
+
+# Pre-existing AWS key name you will use to access the instance(s)
 ssh_key_name = "my-ssh-key"
-#Subnet ID's to use, should be a list
+
+# Pre-existing list of Subnet ID(s) to use
 subnet_ids = ["subnet-0ab1cd2e"]
-#VPC to use
+
+# Pre-existing VPC ID to use
 vpc_id = "vpc-123abc45"
-#Product versions. Check existing AMIs for combination
-consul_version = "0.8.3"
+
+# Product versions to use (requires matching AMI)
+consul_version = "0.8.4"
 nomad_version  = "0.5.6"
-vault_version  = "0.7.2"
+vault_version  = "0.7.3"

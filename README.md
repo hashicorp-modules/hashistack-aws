@@ -1,4 +1,4 @@
-# hashi-stack-aws
+# hashistack-aws
 Provides the resources for an Autoscaling group in AWS running Consul, Vault and Nomad.
 
 ## Requirements
@@ -42,7 +42,7 @@ An existing `terraform.tfvars.example` file exists to be leveraged as an example
 
 ## Images
 
-- [hashi-stack.json Packer template](https://github.com/hashicorp-modules/packer-templates/blob/master/hashi-stack/hashi-stack.json)
+- [hashistack.json Packer template](https://github.com/hashicorp-modules/packer-templates/blob/master/hashistack/hashistack.json)
 
 ## Usage
 
@@ -95,9 +95,9 @@ module "network-aws" {
   ssh_key_name     = "${var.ssh_key_name}"
 }
 
-module "hashi-stack-aws" {
-  source         = "git@github.com:hashicorp-modules/hashi-stack-aws.git"
-  cluster_name   = "${var.environment_name}-hashi-stack-asg"
+module "hashistack-aws" {
+  source         = "git@github.com:hashicorp-modules/hashistack-aws.git"
+  cluster_name   = "${var.environment_name}-hashistack-asg"
   os             = "${var.os}"
   os_version     = "${var.os_version}"
   consul_version = "${var.consul_version}"

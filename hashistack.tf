@@ -20,11 +20,11 @@ resource "aws_iam_role" "hashistack_server" {
 resource "aws_iam_role_policy" "hashistack_server" {
   name   = "SelfAssembly"
   role   = "${aws_iam_role.hashistack_server.id}"
-  policy = "${data.aws_iam_policy_document.server.json}"
+  policy = "${data.aws_iam_policy_document.hashistack_server.json}"
 }
 
 resource "aws_iam_instance_profile" "hashistack_server" {
-  name = "${var.cluster_name}-HashiStackServer"
+  name = "${var.cluster_name}-HashiStack-Server"
   role = "${aws_iam_role.hashistack_server.name}"
 }
 
@@ -32,8 +32,8 @@ data "template_file" "init" {
   template = "${file("${path.module}/init-cluster.tpl")}"
 
   vars = {
-    cluster_size          = "${var.cluster_size}"
-    consul_retry_join_ec2 = "${var.consul_retry_join_ec2}"
+    cluster_size     = "${var.cluster_size}"
+    environment_name = "${var.environment_name}"
   }
 }
 
@@ -44,7 +44,7 @@ resource "aws_launch_configuration" "hashistack_server" {
   key_name      = "${var.ssh_key_name}"
 
   security_groups = [
-    "${aws_security_group.server.id}",
+    "${aws_security_group.hashistack_server.id}",
     "${aws_security_group.consul_client.id}",
   ]
 
@@ -60,7 +60,7 @@ resource "aws_launch_configuration" "hashistack_server" {
 resource "aws_autoscaling_group" "hashistack_server" {
   launch_configuration = "${aws_launch_configuration.hashistack_server.id}"
   vpc_zone_identifier  = ["${var.subnet_ids}"]
-  name                 = "${var.cluster_name} Hashi Servers"
+  name                 = "${var.cluster_name} HashiStack Servers"
   max_size             = "${var.cluster_size}"
   min_size             = "${var.cluster_size}"
   desired_capacity     = "${var.cluster_size}"
@@ -80,8 +80,8 @@ resource "aws_autoscaling_group" "hashistack_server" {
   }
 
   tag {
-    key                 = "consul_retry_join_ec2"
-    value               = "${var.consul_retry_join_ec2}"
+    key                 = "Environment-Name"
+    value               = "${var.environment_name}"
     propagate_at_launch = true
   }
 }

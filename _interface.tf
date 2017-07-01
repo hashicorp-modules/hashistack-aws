@@ -1,17 +1,19 @@
 # Required variables
 variable "cluster_name" {
-  description = "Auto Scaling Group Cluster Name - Will be used for Consul, Vault and Nomad"
+  description = "Auto Scaling Group Cluster Name"
+}
+
+variable "environment_name" {
+  description = "Environment Name (tagged to all instances)"
 }
 
 variable "os" {
   # case sensitive for AMI lookup
   description = "Operating System to use ie RHEL or Ubuntu"
-  default     = "RHEL"
 }
 
 variable "os_version" {
   description = "Operating System version to use ie 7.3 (for RHEL) or 16.04 (for Ubuntu)"
-  default     = "7.3"
 }
 
 variable "ssh_key_name" {
@@ -33,14 +35,9 @@ variable "cluster_size" {
   description = "Number of instances to launch in the cluster"
 }
 
-variable "consul_retry_join_ec2" {
-  default     = "consul-aws"
-  description = "The tag Consul uses to auto-join instances as a cluster"
-}
-
 variable "consul_version" {
-  default     = "0.8.3"
-  description = "Consul Agent version to use ie 0.8.1"
+  default     = "0.8.4"
+  description = "Consul version to use ie 0.8.4"
 }
 
 variable "nomad_version" {
@@ -72,6 +69,6 @@ output "consul_client_sg_id" {
   value = "${aws_security_group.consul_client.id}"
 }
 
-output "server_sg_id" {
-  value = "${aws_security_group.server.id}"
+output "hashistack_server_sg_id" {
+  value = "${aws_security_group.hashistack_server.id}"
 }
