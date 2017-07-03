@@ -3,7 +3,7 @@ terraform {
 }
 
 module "images-aws" {
-  source         = "git@github.com:hashicorp-modules/images-aws.git"
+  source         = "git@github.com:hashicorp-modules/images-aws.git?ref=2017-07-03"
   nomad_version  = "${var.nomad_version}"
   vault_version  = "${var.vault_version}"
   consul_version = "${var.consul_version}"
@@ -69,7 +69,7 @@ resource "aws_autoscaling_group" "hashistack_server" {
 
   tag {
     key                 = "Name"
-    value               = "${format("%s Hashistack Server", var.cluster_name)}"
+    value               = "${format("%s HashiStack Server", var.cluster_name)}"
     propagate_at_launch = true
   }
 

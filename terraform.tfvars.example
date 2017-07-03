@@ -5,10 +5,10 @@ cluster_name = "my-prod-cluster"
 environment_name = "my-env"
 
 # Operating System to use ie RHEL or Ubuntu
-os = "RHEL"
+os = "Ubuntu"
 
 # Operating System version to use ie 7.3 (for RHEL) or 16.04 (for Ubuntu)
-os_version = "7.3"
+os_version = "16.04"
 
 # Pre-existing AWS key name you will use to access the instance(s)
 ssh_key_name = "my-ssh-key"

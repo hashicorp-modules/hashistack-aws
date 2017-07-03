@@ -1,68 +1,57 @@
 #!/bin/bash
 
-CONSUL_USER=$${USER:-"consul"}
-CONSUL_GROUP=$${GROUP:-"consul"}
-CONFIG_DIR="/etc/consul.d"
-DATA_DIR="/opt/consul/data"
-#Removing trailing whitespace in hostname -I
-IP_ADDR="$(hostname -I| sed 's/[ \t]*$//')"
-
 instance_id="$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"
+local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
 new_hostname="hashistack-$${instance_id}"
 
-# set the hostname (before starting consul)
+# stop consul and nomad so they can be configured correctly
+systemctl stop nomad
+systemctl stop vault
+systemctl stop consul
+
+# clear the consul and nomad data directory ready for a fresh start
+rm -rf /opt/consul/data/*
+rm -rf /opt/nomad/data/*
+rm -rf /opt/vault/data/*
+
+# set the hostname (before starting consul and nomad)
 hostnamectl set-hostname "$${new_hostname}"
 
+# seeing failed nodes listed  in consul members with their solo config
+# try a 2 min sleep to see if it helps with all instances wiping data
+# in a similar time window
+sleep 120
+
 # add the consul group to the config with jq
-jq ".retry_join_ec2 += {\"tag_key\": \"consul_retry_join_ec2\", \"tag_value\": \"${consul_retry_join_ec2}\"}" < /etc/consul.d/consul-default.json > /tmp/consul-default.tmp
+jq ".retry_join_ec2 += {\"tag_key\": \"Environment-Name\", \"tag_value\": \"${environment_name}\"}" < /etc/consul.d/consul-default.json > /tmp/consul-default.json.tmp
+sed -i -e "s/127.0.0.1/$${local_ipv4}/" /tmp/consul-default.json.tmp
+mv /tmp/consul-default.json.tmp /etc/consul.d/consul-default.json
+chown consul:consul /etc/consul.d/consul-default.json
 
 # add the cluster instance count to the config with jq
-jq ".bootstrap_expect = ${cluster_size}" < /etc/consul.d/consul-server.json > /tmp/consul-server.tmp
+jq ".bootstrap_expect = ${cluster_size}" < /etc/consul.d/consul-server.json > /tmp/consul-server.json.tmp
+mv /tmp/consul-server.json.tmp /etc/consul.d/consul-server.json
+chown consul:consul /etc/consul.d/consul-server.json
 
-# cp rather than mv to maintain owner and permissions on files
-cp /tmp/consul-default.tmp /etc/consul.d/consul-default.json
-cp /tmp/consul-server.tmp /etc/consul.d/consul-server.json
-
-sudo chown -R $${CONSUL_USER}:$${CONSUL_GROUP} $${CONFIG_DIR} $${DATA_DIR}
-
-systemctl enable consul
+# start consul once it is configured correctly
 systemctl start consul
 
-# Use consul to assemble nomad cluster
+# configure nomad to listen on private ip address for rpc and serf
+echo "advertise {
+  http = \"127.0.0.1\"
+  rpc = \"$${local_ipv4}\"
+  serf = \"$${local_ipv4}\"
+}" | tee -a /etc/nomad.d/nomad-default.hcl
 
-cat <<EOF > /etc/nomad.d/nomad-consul.hcl
-consul {
-  address = "127.0.0.1:8500"
-  auto_advertise = true
+# add the cluster instance count to the nomad server config
+sed -e "s/bootstrap_expect = 1/bootstrap_expect = ${cluster_size}/g" /etc/nomad.d/nomad-server.hcl > /tmp/nomad-server.hcl.tmp
+mv /tmp/nomad-server.hcl.tmp /etc/nomad.d/nomad-server.hcl
 
-  server_auto_join = true
-  client_auto_join = true
-}
-EOF
+# start nomad once it is configured correctly
+systemctl start nomad
 
-# Set an appropiate bootstrap_expect for Nomad
-sed -i 's/  bootstrap_expect = 1/  bootstrap_expect = ${cluster_size}/g' /etc/nomad.d/nomad-server.hcl
+# currently no additional configuration required for vault
+# todo: support TLS in hashistack and pass in {vault_use_tls} once available
 
-# Fix Nomad Advertise Addresses
-cat <<EOF > /etc/nomad.d/nomad-advertise.hcl
-advertise {
-  http = "$${IP_ADDR}"
-  serf = "$${IP_ADDR}"
-  rpc = "$${IP_ADDR}"
-
-}
-EOF
-
-systemctl enable nomad
-service nomad start
-
-# Configure Vault to use Consul as Storage Backend
-cat <<EOF > /etc/vault.d/vault-consul.hcl
-storage "consul" {
-  address = "127.0.0.1:8500"
-  path    = "vault"
-}
-EOF
-
-systemctl enable vault
-service vault start
+# start vault once it is configured correctly
+systemctl start vault
