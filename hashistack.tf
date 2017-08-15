@@ -2,10 +2,6 @@ terraform {
   required_version = ">= 0.9.3"
 }
 
-provider "aws" {
-  region = "${var.region}"
-}
-
 data "aws_ami" "hashistack" {
   most_recent = true
   owners      = ["362381645759"] # hc-se-demos Hashicorp Demos New Account

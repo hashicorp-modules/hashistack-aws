@@ -57,11 +57,6 @@ variable "instance_type" {
   description = "AWS instance type to use eg m4.large"
 }
 
-variable "region" {
-  default     = "us-west-1"
-  description = "Region to deploy consul cluster ie us-west-1"
-}
-
 # Outputs
 output "asg_id" {
   value = "${aws_autoscaling_group.hashistack_server.id}"
