@@ -7,6 +7,18 @@ variable "environment_name" {
   description = "Environment Name (tagged to all instances)"
 }
 
+variable "consul_version" {
+  description = "Consul version to use eg 0.8.4 or 0.8.4+ent"
+}
+
+variable "nomad_version" {
+  description = "Nomad version to use eg 0.6.0 or 0.6.0+ent"
+}
+
+variable "vault_version" {
+  description = "Vault version to use eg 0.7.3 or 0.7.3+ent"
+}
+
 variable "os" {
   # case sensitive for AMI lookup
   description = "Operating System to use ie RHEL or Ubuntu"
@@ -35,19 +47,9 @@ variable "cluster_size" {
   description = "Number of instances to launch in the cluster"
 }
 
-variable "consul_version" {
-  default     = "0.8.4"
-  description = "Consul version to use ie 0.8.4"
-}
-
-variable "nomad_version" {
-  default     = "0.5.6"
-  description = "Nomad version to use ie 0.5.6"
-}
-
-variable "vault_version" {
-  default     = "0.7.2"
-  description = "Vault version to use ie 0.7.1"
+variable "environment" {
+  default     = "production"
+  description = "Environment eg development, stage or production"
 }
 
 variable "instance_type" {

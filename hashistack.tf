@@ -2,14 +2,58 @@ terraform {
   required_version = ">= 0.9.3"
 }
 
-module "images-aws" {
-  source         = "git@github.com:hashicorp-modules/images-aws.git?ref=2017-07-03"
-  nomad_version  = "${var.nomad_version}"
-  vault_version  = "${var.vault_version}"
-  consul_version = "${var.consul_version}"
-  aws_region     = "${var.region}"
-  os             = "${var.os}"
-  os_version     = "${var.os_version}"
+provider "aws" {
+  region = "${var.region}"
+}
+
+data "aws_ami" "hashistack" {
+  most_recent = true
+  owners      = ["362381645759"] # hc-se-demos Hashicorp Demos New Account
+
+  filter {
+    name   = "tag:System"
+    values = ["HashiStack"]
+  }
+
+  filter {
+    name   = "tag:Environment"
+    values = ["${var.environment}"]
+  }
+
+  filter {
+    name   = "tag:OS"
+    values = ["${var.os}"]
+  }
+
+  filter {
+    name   = "tag:OS-Version"
+    values = ["${var.os_version}"]
+  }
+
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "tag:Consul-Version"
+    values = ["${var.consul_version}"]
+  }
+
+  filter {
+    name   = "tag:Nomad-Version"
+    values = ["${var.nomad_version}"]
+  }
+
+  filter {
+    name   = "tag:Vault-Version"
+    values = ["${var.vault_version}"]
+  }
 }
 
 resource "aws_iam_role" "hashistack_server" {
@@ -38,7 +82,10 @@ data "template_file" "init" {
 }
 
 resource "aws_launch_configuration" "hashistack_server" {
-  image_id      = "${module.images-aws.hashistack_image}"
+  associate_public_ip_address = false
+  ebs_optimized               = false
+  iam_instance_profile        = "${aws_iam_instance_profile.hashistack_server.id}"
+  image_id      = "${data.aws_ami.hashistack.id}"
   instance_type = "${var.instance_type}"
   user_data     = "${data.template_file.init.rendered}"
   key_name      = "${var.ssh_key_name}"
@@ -47,10 +94,6 @@ resource "aws_launch_configuration" "hashistack_server" {
     "${aws_security_group.hashistack_server.id}",
     "${aws_security_group.consul_client.id}",
   ]
-
-  associate_public_ip_address = false
-  ebs_optimized               = false
-  iam_instance_profile        = "${aws_iam_instance_profile.hashistack_server.id}"
 
   lifecycle {
     create_before_destroy = true
