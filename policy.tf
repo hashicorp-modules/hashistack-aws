@@ -25,6 +25,9 @@ data "aws_iam_policy_document" "hashistack_server" {
       "ec2:DescribeInstances",
       "ec2:DescribeVpcs",
       "ec2:DescribeTags",
+      "iam:GetInstanceProfile",
+      "iam:GetUser",
+      "iam:GetRole",
     ]
   }
 }
