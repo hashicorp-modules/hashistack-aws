@@ -12,24 +12,6 @@ variable "binary_type" {
   default     = "ent"
 }
 
-# BEGIN binary version variables (deprecated)
-# They are no longer necessary and won't be used
-# Leaving only for backwards compatibility
-variable "consul_version" {
-  description = "Consul version to use eg 0.8.4 or 0.8.4+ent Deprecated, no longer necessary."
-  default = "0.8.4+ent"
-}
-
-variable "nomad_version" {
-  description = "Nomad version to use eg 0.6.0 or 0.6.0+ent Deprecated, no longer necessary."
-}
-
-variable "vault_version" {
- description = "Vault version to use eg 0.7.3 or 0.7.3+ent. Deprecated, no longer necessary."
-}
-
-# End deprecated binary version variables
-
 variable "os" {
   # case sensitive for AMI lookup
   description = "Operating System to use ie RHEL or Ubuntu"
