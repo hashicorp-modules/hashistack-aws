@@ -7,16 +7,9 @@ variable "environment_name" {
   description = "Environment Name (tagged to all instances)"
 }
 
-variable "consul_version" {
-  description = "Consul version to use eg 0.8.4 or 0.8.4+ent"
-}
-
-variable "nomad_version" {
-  description = "Nomad version to use eg 0.6.0 or 0.6.0+ent"
-}
-
-variable "vault_version" {
-  description = "Vault version to use eg 0.7.3 or 0.7.3+ent"
+variable "binary_type" {
+  description = "Type of binary. Options: oss or ent"
+  default     = "ent"
 }
 
 variable "os" {
