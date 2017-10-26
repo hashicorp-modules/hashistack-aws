@@ -14,6 +14,7 @@ variable "binary_type" {
 
 # BEGIN binary version variables (deprecated)
 # They are no longer necessary and won't be used
+# Leaving only for backwards compatibility
 variable "consul_version" {
   description = "Consul version to use eg 0.8.4 or 0.8.4+ent Deprecated, no longer necessary."
   default = "0.8.4+ent"
