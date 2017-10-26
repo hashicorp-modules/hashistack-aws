@@ -19,7 +19,5 @@ subnet_ids = ["subnet-0ab1cd2e"]
 # Pre-existing VPC ID to use
 vpc_id = "vpc-123abc45"
 
-# Product versions to use (requires matching AMI)
-consul_version = "0.8.4"
-nomad_version  = "0.6.0"
-vault_version  = "0.7.3"
+# Type of binaries desired on the AMI. Options: "oss" or "ent"
+binary_type = "ent"
