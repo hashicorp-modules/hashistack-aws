@@ -29,9 +29,6 @@ in a `terraform.tfvars` file. Examples below:
 - ssh_key_name = "my-ssh-key"
 - subnet_ids = ["subnet-0ab1cd2e"]
 - vpc_id = "vpc-123abc45"
-- consul_version = "0.8.3"
-- nomad_version  = "0.5.6"
-- vault_version  = "0.7.2"
 
 An existing `terraform.tfvars.example` file exists to be leveraged as an example.
 ## Outputs
@@ -67,19 +64,9 @@ variable "os_version" {
   description = "Operating System version to use ie 7.3 (for RHEL) or 16.04 (for Ubuntu)"
 }
 
-variable "consul_version" {
-  default     = "0.8.3"
-  description = "Consul Agent version to use ie 0.8.1"
-}
-
-variable "nomad_version" {
-  default     = "0.5.6"
-  description = "Nomad version to use ie 0.5.6"
-}
-
-variable "vault_version" {
-  default     = "0.7.2"
-  description = "Vault version to use ie 0.7.1"
+variable "binary_type" {
+  description = "Type of binary. Options: oss or ent"
+  default     = "ent"
 }
 
 variable "ssh_key_name" {
@@ -100,9 +87,7 @@ module "hashistack-aws" {
   cluster_name   = "${var.environment_name}-hashistack-asg"
   os             = "${var.os}"
   os_version     = "${var.os_version}"
-  consul_version = "${var.consul_version}"
-  nomad_version  = "${var.nomad_version}"
-  vault_version  = "${var.vault_version}"
+  binary_type    = "${var.binary_type}"
   ssh_key_name   = "${var.ssh_key_name}"
   subnet_ids     = "${module.network-aws.subnet_private_ids}"
   vpc_id         = "${module.network-aws.vpc_id}"
