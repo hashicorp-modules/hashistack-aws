@@ -23,7 +23,7 @@ hostnamectl set-hostname "$${new_hostname}"
 sleep 120
 
 # add the consul group to the config with jq
-jq ".retry_join_ec2 += {\"tag_key\": \"Environment-Name\", \"tag_value\": \"${environment_name}\"}" < /etc/consul.d/consul-default.json > /tmp/consul-default.json.tmp
+jq ".retry_join = [\"provider=aws tag_key=Environment-Name tag_value=${environment_name}\"]" < /etc/consul.d/consul-default.json > /tmp/consul-default.json.tmp
 sed -i -e "s/127.0.0.1/$${local_ipv4}/" /tmp/consul-default.json.tmp
 mv /tmp/consul-default.json.tmp /etc/consul.d/consul-default.json
 chown consul:consul /etc/consul.d/consul-default.json
