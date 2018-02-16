@@ -4,7 +4,7 @@ terraform {
 
 data "aws_ami" "hashistack" {
   most_recent = true
-  owners      = ["362381645759"] # hc-se-demos Hashicorp Demos New Account
+  owners      = ["362381645759"]                                                                        # hc-se-demos Hashicorp Demos New Account
   name_regex  = "${var.environment}-hashistack-server-${var.binary_type}-${var.os}_${var.os_version}.*"
 
   filter {
@@ -47,10 +47,10 @@ resource "aws_launch_configuration" "hashistack_server" {
   associate_public_ip_address = false
   ebs_optimized               = false
   iam_instance_profile        = "${aws_iam_instance_profile.hashistack_server.id}"
-  image_id      = "${data.aws_ami.hashistack.id}"
-  instance_type = "${var.instance_type}"
-  user_data     = "${data.template_file.init.rendered}"
-  key_name      = "${var.ssh_key_name}"
+  image_id                    = "${data.aws_ami.hashistack.id}"
+  instance_type               = "${var.instance_type}"
+  user_data                   = "${data.template_file.init.rendered}"
+  key_name                    = "${var.ssh_key_name}"
 
   security_groups = [
     "${aws_security_group.hashistack_server.id}",
@@ -95,7 +95,7 @@ resource "aws_autoscaling_group" "hashistack_server" {
     value               = "${var.environment_name}"
     propagate_at_launch = true
   }
-}
+
   tag {
     key                 = "Name"
     value               = "${format("%s HashiStack Server", var.cluster_name)}"
