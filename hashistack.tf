@@ -73,6 +73,30 @@ resource "aws_autoscaling_group" "hashistack_server" {
   force_delete         = true
 
   tag {
+    key                 = "owner"
+    value               = "${var.owner}"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "ttl"
+    value               = "${var.ttl}"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "Cluster-Name"
+    value               = "${var.cluster_name}"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "Environment-Name"
+    value               = "${var.environment_name}"
+    propagate_at_launch = true
+  }
+}
+  tag {
     key                 = "Name"
     value               = "${format("%s HashiStack Server", var.cluster_name)}"
     propagate_at_launch = true

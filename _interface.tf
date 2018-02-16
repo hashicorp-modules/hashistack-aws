@@ -7,6 +7,16 @@ variable "environment_name" {
   description = "Environment Name (tagged to all instances)"
 }
 
+variable "owner" {
+  description = "Person responsable for the instances"
+  default     = "hashicorpse"
+}
+
+variable "ttl" {
+  description = "Time to live for the instances (in days)"
+  default     = "10"
+}
+
 variable "binary_type" {
   description = "Type of binary. Options: oss or ent"
   default     = "ent"
