@@ -1,5 +1,5 @@
 resource "aws_security_group" "hashistack_server" {
-  name        = "hashistack-server-sg"
+  name        = "${var.ssh_key_name}-hashistack-server-sg"
   description = "Security Group for HashiStack Server Instances"
   vpc_id      = "${var.vpc_id}"
 
@@ -106,7 +106,7 @@ resource "aws_security_group" "hashistack_server" {
 }
 
 resource "aws_security_group" "consul_client" {
-  name        = "consul-client-sg"
+  name        = "${var.ssh_key_name}-consul-client-sg"
   description = "Security Group for Consul Client Instances"
   vpc_id      = "${var.vpc_id}"
 
