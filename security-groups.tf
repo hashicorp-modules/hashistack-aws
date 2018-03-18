@@ -80,14 +80,6 @@ resource "aws_security_group" "hashistack_server" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # RPC Consul
-  ingress {
-    from_port   = 8400
-    to_port     = 8400
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   # UDP All outbound traffic
   egress {
     from_port   = 0
@@ -139,14 +131,6 @@ resource "aws_security_group" "consul_client" {
     self      = true
   }
 
-  # RPC
-  ingress {
-    from_port = 8400
-    to_port   = 8400
-    protocol  = "tcp"
-    self      = true
-  }
-
   # Nomad RPC
   ingress {
     from_port = 4647
@@ -155,11 +139,19 @@ resource "aws_security_group" "consul_client" {
     self      = true
   }
 
-  # Nomad Serf
+  # Nomad Serf (TCP)
   ingress {
     from_port = 4648
     to_port   = 4648
     protocol  = "tcp"
+    self      = true
+  }
+
+  # Nomad Serf (UDP)
+  ingress {
+    from_port = 4648
+    to_port   = 4648
+    protocol  = "udp"
     self      = true
   }
 
