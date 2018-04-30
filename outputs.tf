@@ -149,11 +149,11 @@ the below env var has been set for you.
   $ curl \\
       -H \"X-Vault-Token: $${VAULT_TOKEN}\" \\
       -X POST \\
-      -d '{\"foo\":\"bar\"}' \\
-      $${VAULT_ADDR}/v1/secret/api | jq '.' # Write a KV secret
+      -d '{\"data\": {\"foo\":\"bar\"}}' \\
+      $${VAULT_ADDR}/v1/secret/data/api | jq '.' # Write a KV secret
   $ curl \\
       -H \"X-Vault-Token: $${VAULT_TOKEN}\" \\
-      $${VAULT_ADDR}/v1/secret/api | jq '.' # Read a KV secret"
+      $${VAULT_ADDR}/v1/secret/data/api | jq '.' # Read a KV secret"
 :
 "If you're making HTTPS API requests to Vault from the Bastion host,
 the below env vars have been set for you.
@@ -166,13 +166,13 @@ the below env vars have been set for you.
   $ curl \\
       -H \"X-Vault-Token: $VAULT_TOKEN\" \\
       -X POST \\
-      -d '{\"foo\":\"bar\"}' \\
+      -d '{\"data\": {\"foo\":\"bar\"}}' \\
       -k --cacert $${VAULT_CACERT} --cert $${VAULT_CLIENT_CERT} --key $${VAULT_CLIENT_KEY} \\
-      $${VAULT_ADDR}/v1/secret/api | jq '.' # Write a KV secret
+      $${VAULT_ADDR}/v1/secret/data/api | jq '.' # Write a KV secret
   $ curl \\
       -H \"X-Vault-Token: $VAULT_TOKEN\" \\
       -k --cacert $${VAULT_CACERT} --cert $${VAULT_CLIENT_CERT} --key $${VAULT_CLIENT_KEY} \\
-      $${VAULT_ADDR}/v1/secret/api | jq '.' # Read a KV secret"
+      $${VAULT_ADDR}/v1/secret/data/api | jq '.' # Read a KV secret"
 }
 
 # ------------------------------------------------------------------------------
