@@ -8,7 +8,7 @@ You can now interact with Consul using any of the CLI
 (https://www.consul.io/docs/commands/index.html) or
 API (https://www.consul.io/api/index.html) commands.
 
-${format("Consul UI: %s%s %s\n\n%s", var.use_lb_cert ? "https://" : "http://", module.consul_lb_aws.consul_lb_dns, var.public ? "(Public)" : "(Internal)", var.public ? "The Consul nodes are in a public subnet with UI & SSH access open from the\ninternet. WARNING - DO NOT DO THIS IN PRODUCTION!" : "The Consul node(s) are in a private subnet, UI access can only be achieved inside\nthe network through a VPN.")}
+${format("Consul UI: %s %s\n\n%s", module.consul_lb_aws.consul_lb_dns, var.public ? "(Public)" : "(Internal)", var.public ? "The Consul nodes are in a public subnet with UI & SSH access open from the\ninternet. WARNING - DO NOT DO THIS IN PRODUCTION!" : "The Consul node(s) are in a private subnet, UI access can only be achieved inside\nthe network through a VPN.")}
 
 Use the CLI to retrieve the Consul members, write a key/value, and read
 that key/value.
