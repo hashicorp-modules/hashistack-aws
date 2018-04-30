@@ -91,7 +91,7 @@ below command to accomplish this automatically (we'll use Consul DNS moving
 forward once Vault is unsealed).
 
   $ ssh -A ${lookup(var.users, var.os)}@$(curl http://127.0.0.1:8500/v1/agent/members | jq -M -r \
-      '[.[] | select(.Name | contains ("${var.name}-vault")) | .Addr][0]')
+      '[.[] | select(.Name | contains ("${var.name}-hashistack")) | .Addr][0]')
 
 2.) Initialize Vault
 
