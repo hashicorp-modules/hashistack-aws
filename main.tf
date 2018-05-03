@@ -211,11 +211,12 @@ module "nomad_lb_aws" {
 resource "aws_autoscaling_group" "hashistack" {
   count = "${var.create ? 1 : 0}"
 
-  name_prefix          = "${format("%s-hashistack-", var.name)}"
+  name_prefix          = "${aws_launch_configuration.hashistack.name}"
   launch_configuration = "${aws_launch_configuration.hashistack.id}"
   vpc_zone_identifier  = ["${var.subnet_ids}"]
   max_size             = "${var.count != -1 ? var.count : length(var.subnet_ids)}"
   min_size             = "${var.count != -1 ? var.count : length(var.subnet_ids)}"
+  min_elb_capacity     = "${var.count != -1 ? var.count : length(var.subnet_ids)}"
   desired_capacity     = "${var.count != -1 ? var.count : length(var.subnet_ids)}"
   default_cooldown     = 30
   force_delete         = true
@@ -239,4 +240,8 @@ resource "aws_autoscaling_group" "hashistack" {
     ),
     var.tags_list
   )}"]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
