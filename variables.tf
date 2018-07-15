@@ -19,8 +19,8 @@ variable "consul_version" {
 }
 
 variable "vault_version" {
-  description = "Vault version tag (e.g. 0.10.0 or 0.10.0-ent), defaults to \"0.10.0\"."
-  default     = "0.10.0"
+  description = "Vault version tag (e.g. 0.10.3 or 0.10.3-ent), defaults to \"0.10.3\"."
+  default     = "0.10.3"
 }
 
 variable "nomad_version" {
