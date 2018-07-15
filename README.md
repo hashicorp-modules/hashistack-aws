@@ -21,7 +21,7 @@ Checkout [examples](./examples) for fully functioning examples.
 - `create`: [Optional] Create Module, defaults to true.
 - `name`: [Optional] Name for resources, defaults to "hashistack-aws".
 - `release_version`: [Optional] Release version tag to use (e.g. 0.1.0, 0.1.0-rc1, 0.1.0-beta1, 0.1.0-dev1), defaults to "0.1.0", view releases at https://github.com/hashicorp/guides-configuration#hashistack-version-tables.
-- `consul_version`: [Optional] Consul version tag to use (e.g. 1.0.6 or 1.0.6-ent), defaults to "1.0.6".
+- `consul_version`: [Optional] Consul version tag to use (e.g. 1.2.0 or 1.2.0-ent), defaults to "1.2.0".
 - `vault_version`: [Optional] Vault version tag to use (e.g. 0.10.0 or 0.10.0-ent), defaults to "0.10.0".
 - `nomad_version`: [Optional] Nomad version tag to use (e.g. 0.8.0 or 0.8.0-ent), defaults to "0.8.0".
 - `os`: [Optional] Operating System to use (e.g. RHEL or Ubuntu), defaults to "RHEL".

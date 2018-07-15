@@ -14,8 +14,8 @@ variable "release_version" {
 }
 
 variable "consul_version" {
-  description = "Consul version tag (e.g. 1.0.6 or 1.0.6-ent), defaults to \"1.0.6\"."
-  default     = "1.0.6"
+  description = "Consul version tag (e.g. 1.2.0 or 1.2.0-ent), defaults to \"1.2.0\"."
+  default     = "1.2.0"
 }
 
 variable "vault_version" {
