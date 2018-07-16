@@ -21,7 +21,7 @@ data "aws_ami" "hashistack" {
   count       = "${var.create && var.image_id == "" ? 1 : 0}"
   most_recent = true
   owners      = ["self"]
-  name_regex  = "hashistack-image_${lower(var.release_version)}_consul_${lower(var.consul_version)}_vault_${lower(var.vault_version)}_nomad_${lower(var.nomad_version)}_${lower(var.os)}_${var.os_version}.*"
+  name_regex  = "hashistack-image_${lower(var.release_version)}_nomad_${lower(var.nomad_version)}_vault_${lower(var.vault_version)}_consul_${lower(var.consul_version)}_${lower(var.os)}_${var.os_version}.*"
 
   filter {
     name   = "tag:System"
@@ -39,8 +39,8 @@ data "aws_ami" "hashistack" {
   }
 
   filter {
-    name   = "tag:Consul-Version"
-    values = ["${lower(var.consul_version)}"]
+    name   = "tag:Nomad-Version"
+    values = ["${lower(var.nomad_version)}"]
   }
 
   filter {
@@ -49,8 +49,8 @@ data "aws_ami" "hashistack" {
   }
 
   filter {
-    name   = "tag:Nomad-Version"
-    values = ["${lower(var.nomad_version)}"]
+    name   = "tag:Consul-Version"
+    values = ["${lower(var.consul_version)}"]
   }
 
   filter {
