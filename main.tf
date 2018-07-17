@@ -2,14 +2,6 @@ terraform {
   required_version = ">= 0.11.6"
 }
 
-provider "aws" {
-  version = "~> 1.12"
-}
-
-provider "template" {
-  version = "~> 1.0"
-}
-
 module "consul_auto_join_instance_role" {
   source = "github.com/hashicorp-modules/consul-auto-join-instance-role-aws"
 
