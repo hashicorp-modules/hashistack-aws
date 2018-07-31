@@ -51,8 +51,14 @@ variable "subnet_ids" {
   type        = "list"
 }
 
+variable "cidr_blocks" {
+  description = "Optional list of CIDR blocks to set on resources, defaults to \"vpc_cidr\"."
+  type        = "list"
+  default     = []
+}
+
 variable "public" {
-  description = "Open up nodes to the public internet for easy access - DO NOT DO THIS IN PROD, defaults to false."
+  description = "Make hosts public, set optional \"cidr_blocks\" variable to open outside of the \"vpc_cidr\" - DO NOT DO THIS IN PROD, defaults to false."
   default     = false
 }
 

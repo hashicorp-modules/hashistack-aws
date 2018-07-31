@@ -29,7 +29,8 @@ Checkout [examples](./examples) for fully functioning examples.
 - `vpc_id`: [Required] VPC ID to provision resources in.
 - `vpc_cidr`: [Optional] VPC CIDR block to provision resources in.
 - `subnet_ids`: [Optional] Subnet ID(s) to provision resources in.
-- `public`: [Optional] Open up nodes to the public internet for easy access - DO NOT DO THIS IN PROD, defaults to false.
+- `cidr_blocks`: [Optional] List of CIDR blocks to set on resources, defaults to "vpc_cidr".
+- `public`: [Optional] Make hosts public, set optional "cidr_blocks" variable to open outside of the "vpc_cidr" - DO NOT DO THIS IN PROD, defaults to false.
 - `count`: [Optional] Number of HashiStack nodes to provision across private subnets, defaults to private subnet count.
 - `instance_type`: [Optional] AWS instance type for Consul node (e.g. "m4.large"), defaults to "t2.small".
 - `image_id`: [Optional] AMI to use, defaults to the HashiStack AMI.

@@ -41,7 +41,7 @@ module "consul_server_sg" {
   create      = "${var.create ? 1 : 0}"
   name        = "${var.name}-consul-server"
   vpc_id      = "${var.vpc_id}"
-  cidr_blocks = ["${var.public ? "0.0.0.0/0" : var.vpc_cidr}"] # If there's a public IP, open Consul ports for public access - DO NOT DO THIS IN PROD
+  cidr_blocks = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
 }
 
 module "vault_server_sg" {
@@ -50,7 +50,7 @@ module "vault_server_sg" {
   create      = "${var.create ? 1 : 0}"
   name        = "${var.name}-vault-server"
   vpc_id      = "${var.vpc_id}"
-  cidr_blocks = ["${var.public ? "0.0.0.0/0" : var.vpc_cidr}"] # If there's a public IP, open HashiStack ports for public access - DO NOT DO THIS IN PROD
+  cidr_blocks = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
 }
 
 module "nomad_server_sg" {
@@ -59,7 +59,7 @@ module "nomad_server_sg" {
   create      = "${var.create ? 1 : 0}"
   name        = "${var.name}-nomad-server"
   vpc_id      = "${var.vpc_id}"
-  cidr_blocks = ["${var.public ? "0.0.0.0/0" : var.vpc_cidr}"] # If there's a public IP, open HashiStack ports for public access - DO NOT DO THIS IN PROD
+  cidr_blocks = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
 }
 
 resource "aws_security_group_rule" "ssh" {
@@ -70,7 +70,7 @@ resource "aws_security_group_rule" "ssh" {
   protocol          = "tcp"
   from_port         = 22
   to_port           = 22
-  cidr_blocks       = ["${var.public ? "0.0.0.0/0" : var.vpc_cidr}"] # If there's a public IP, open port 22 for public access - DO NOT DO THIS IN PROD
+  cidr_blocks       = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
 }
 
 resource "aws_launch_configuration" "hashistack" {
@@ -97,12 +97,13 @@ resource "aws_launch_configuration" "hashistack" {
 }
 
 module "consul_lb_aws" {
-  source = "github.com/hashicorp-modules/consul-lb-aws"
+  # source = "github.com/hashicorp-modules/consul-lb-aws"
+  source = "../consul-lb-aws"
 
   create             = "${var.create}"
   name               = "${var.name}"
   vpc_id             = "${var.vpc_id}"
-  cidr_blocks        = ["${var.public ? "0.0.0.0/0" : var.vpc_cidr}"] # If there's a public IP, open port 22 for public access - DO NOT DO THIS IN PROD
+  cidr_blocks        = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
   subnet_ids         = ["${var.subnet_ids}"]
   is_internal_lb     = "${!var.public}"
   use_lb_cert        = "${var.use_lb_cert}"
@@ -118,12 +119,13 @@ module "consul_lb_aws" {
 }
 
 module "vault_lb_aws" {
-  source = "github.com/hashicorp-modules/vault-lb-aws"
+  # source = "github.com/hashicorp-modules/vault-lb-aws"
+  source = "../vault-lb-aws"
 
   create             = "${var.create}"
   name               = "${var.name}"
   vpc_id             = "${var.vpc_id}"
-  cidr_blocks        = ["${var.public ? "0.0.0.0/0" : var.vpc_cidr}"] # If there's a public IP, open port 22 for public access - DO NOT DO THIS IN PROD
+  cidr_blocks        = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
   subnet_ids         = ["${var.subnet_ids}"]
   is_internal_lb     = "${!var.public}"
   use_lb_cert        = "${var.use_lb_cert}"
@@ -139,12 +141,13 @@ module "vault_lb_aws" {
 }
 
 module "nomad_lb_aws" {
-  source = "github.com/hashicorp-modules/nomad-lb-aws"
+  # source = "github.com/hashicorp-modules/nomad-lb-aws"
+  source = "../nomad-lb-aws"
 
   create             = "${var.create}"
   name               = "${var.name}"
   vpc_id             = "${var.vpc_id}"
-  cidr_blocks        = ["${var.public ? "0.0.0.0/0" : var.vpc_cidr}"] # If there's a public IP, open port 22 for public access - DO NOT DO THIS IN PROD
+  cidr_blocks        = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
   subnet_ids         = ["${var.subnet_ids}"]
   is_internal_lb     = "${!var.public}"
   use_lb_cert        = "${var.use_lb_cert}"
@@ -167,7 +170,6 @@ resource "aws_autoscaling_group" "hashistack" {
   vpc_zone_identifier  = ["${var.subnet_ids}"]
   max_size             = "${var.count != -1 ? var.count : length(var.subnet_ids)}"
   min_size             = "${var.count != -1 ? var.count : length(var.subnet_ids)}"
-  min_elb_capacity     = "${var.count != -1 ? var.count : length(var.subnet_ids)}"
   desired_capacity     = "${var.count != -1 ? var.count : length(var.subnet_ids)}"
   default_cooldown     = 30
   force_delete         = true
