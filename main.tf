@@ -12,48 +12,7 @@ module "consul_auto_join_instance_role" {
 data "aws_ami" "hashistack" {
   count       = "${var.create && var.image_id == "" ? 1 : 0}"
   most_recent = true
-  owners      = ["self"]
   name_regex  = "hashistack-image_${lower(var.release_version)}_nomad_${lower(var.nomad_version)}_vault_${lower(var.vault_version)}_consul_${lower(var.consul_version)}_${lower(var.os)}_${var.os_version}.*"
-
-  filter {
-    name   = "tag:System"
-    values = ["HashiStack"]
-  }
-
-  filter {
-    name   = "tag:Product"
-    values = ["HashiStack"]
-  }
-
-  filter {
-    name   = "tag:Release-Version"
-    values = ["${lower(var.release_version)}"]
-  }
-
-  filter {
-    name   = "tag:Nomad-Version"
-    values = ["${lower(var.nomad_version)}"]
-  }
-
-  filter {
-    name   = "tag:Vault-Version"
-    values = ["${lower(var.vault_version)}"]
-  }
-
-  filter {
-    name   = "tag:Consul-Version"
-    values = ["${lower(var.consul_version)}"]
-  }
-
-  filter {
-    name   = "tag:OS"
-    values = ["${lower(var.os)}"]
-  }
-
-  filter {
-    name   = "tag:OS-Version"
-    values = ["${var.os_version}"]
-  }
 
   filter {
     name   = "root-device-type"
