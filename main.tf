@@ -167,7 +167,6 @@ resource "aws_autoscaling_group" "hashistack" {
   vpc_zone_identifier  = ["${var.subnet_ids}"]
   max_size             = "${var.count != -1 ? var.count : length(var.subnet_ids)}"
   min_size             = "${var.count != -1 ? var.count : length(var.subnet_ids)}"
-  min_elb_capacity     = "${var.count != -1 ? var.count : length(var.subnet_ids)}"
   desired_capacity     = "${var.count != -1 ? var.count : length(var.subnet_ids)}"
   default_cooldown     = 30
   force_delete         = true
