@@ -51,17 +51,6 @@ variable "subnet_ids" {
   type        = "list"
 }
 
-variable "cidr_blocks" {
-  description = "Optional list of CIDR blocks to set on resources, defaults to \"vpc_cidr\"."
-  type        = "list"
-  default     = []
-}
-
-variable "public" {
-  description = "Make hosts public, set optional \"cidr_blocks\" variable to open outside of the \"vpc_cidr\" - DO NOT DO THIS IN PROD, defaults to false."
-  default     = false
-}
-
 variable "count" {
   description = "Number of HashiStack nodes to provision across private subnets, defaults to private subnet count."
   default     = -1
@@ -91,7 +80,18 @@ variable "ssh_key_name" {
   description = "AWS key name you will use to access the instance(s)."
 }
 
-variable "use_lb_cert" {
+variable "lb_cidr_blocks" {
+  description = "Optional list of CIDR blocks to set on LB, defaults to \"vpc_cidr\"."
+  type        = "list"
+  default     = []
+}
+
+variable "lb_internal" {
+  description = "Creates an internal load balancer, defaults to true"
+  default     = true
+}
+
+variable "lb_use_cert" {
   description = "Use certificate passed in for the LB IAM listener, \"lb_cert\" and \"lb_private_key\" must be passed in if true, defaults to false."
   default     = false
 }

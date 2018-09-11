@@ -41,7 +41,7 @@ module "consul_server_sg" {
   create      = "${var.create ? 1 : 0}"
   name        = "${var.name}-consul-server"
   vpc_id      = "${var.vpc_id}"
-  cidr_blocks = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
+  cidr_blocks = ["${var.vpc_cidr}"]
 }
 
 module "vault_server_sg" {
@@ -50,7 +50,7 @@ module "vault_server_sg" {
   create      = "${var.create ? 1 : 0}"
   name        = "${var.name}-vault-server"
   vpc_id      = "${var.vpc_id}"
-  cidr_blocks = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
+  cidr_blocks = ["${var.vpc_cidr}"]
 }
 
 module "nomad_server_sg" {
@@ -59,31 +59,43 @@ module "nomad_server_sg" {
   create      = "${var.create ? 1 : 0}"
   name        = "${var.name}-nomad-server"
   vpc_id      = "${var.vpc_id}"
-  cidr_blocks = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
+  cidr_blocks = ["${var.vpc_cidr}"]
 }
 
 resource "aws_security_group_rule" "ssh" {
-  count = "${var.create ? 1 : 0}"
+  count = "${var.create ? 3 : 0}"
 
-  security_group_id = "${module.vault_server_sg.vault_server_sg_id}"
+  security_group_id = "${element(list(module.vault_server_sg.consul_server_sg_id, module.vault_server_sg.vault_server_sg_id, module.nomad_server_sg.vault_server_sg_id), count.index)}"
   type              = "ingress"
   protocol          = "tcp"
   from_port         = 22
   to_port           = 22
-  cidr_blocks       = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
+  cidr_blocks       = ["${split(",", length(compact(var.lb_cidr_blocks)) > 0 ? join(",", compact(var.lb_cidr_blocks)) : var.vpc_cidr)}"]
+  description       = "SSH access to HashiStack node"
+}
+
+resource "aws_security_group_rule" "wetty_tcp" {
+  count = "${var.create ? 3 : 0}"
+
+  security_group_id = "${element(list(module.vault_server_sg.consul_server_sg_id, module.vault_server_sg.vault_server_sg_id, module.nomad_server_sg.vault_server_sg_id), count.index)}"
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = 3030
+  to_port           = 3030
+  cidr_blocks       = ["${split(",", length(compact(var.lb_cidr_blocks)) > 0 ? join(",", compact(var.lb_cidr_blocks)) : var.vpc_cidr)}"]
+  description       = "Wetty inbound TCP traffic to HashiStack node"
 }
 
 resource "aws_launch_configuration" "hashistack" {
   count = "${var.create ? 1 : 0}"
 
-  name_prefix                 = "${format("%s-hashistack-", var.name)}"
-  associate_public_ip_address = "${var.public}"
-  ebs_optimized               = false
-  instance_type               = "${var.instance_type}"
-  image_id                    = "${var.image_id != "" ? var.image_id : element(concat(data.aws_ami.hashistack.*.id, list("")), 0)}" # TODO: Workaround for issue #11210
-  iam_instance_profile        = "${var.instance_profile != "" ? var.instance_profile : module.consul_auto_join_instance_role.instance_profile_id}"
-  user_data                   = "${data.template_file.hashistack_init.rendered}"
-  key_name                    = "${var.ssh_key_name}"
+  name_prefix          = "${format("%s-hashistack-", var.name)}"
+  ebs_optimized        = false
+  instance_type        = "${var.instance_type}"
+  image_id             = "${var.image_id != "" ? var.image_id : element(concat(data.aws_ami.hashistack.*.id, list("")), 0)}" # TODO: Workaround for issue #11210
+  iam_instance_profile = "${var.instance_profile != "" ? var.instance_profile : module.consul_auto_join_instance_role.instance_profile_id}"
+  user_data            = "${data.template_file.hashistack_init.rendered}"
+  key_name             = "${var.ssh_key_name}"
 
   security_groups = [
     "${module.consul_server_sg.consul_server_sg_id}",
@@ -103,10 +115,10 @@ module "consul_lb_aws" {
   create             = "${var.create}"
   name               = "${var.name}"
   vpc_id             = "${var.vpc_id}"
-  cidr_blocks        = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
+  cidr_blocks        = ["${split(",", length(compact(var.lb_cidr_blocks)) > 0 ? join(",", compact(var.lb_cidr_blocks)) : var.vpc_cidr)}"]
   subnet_ids         = ["${var.subnet_ids}"]
-  is_internal_lb     = "${!var.public}"
-  use_lb_cert        = "${var.use_lb_cert}"
+  lb_internal        = "${var.lb_internal}"
+  lb_use_cert        = "${var.lb_use_cert}"
   lb_cert            = "${var.lb_cert}"
   lb_private_key     = "${var.lb_private_key}"
   lb_cert_chain      = "${var.lb_cert_chain}"
@@ -125,10 +137,10 @@ module "vault_lb_aws" {
   create             = "${var.create}"
   name               = "${var.name}"
   vpc_id             = "${var.vpc_id}"
-  cidr_blocks        = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
+  cidr_blocks        = ["${split(",", length(compact(var.lb_cidr_blocks)) > 0 ? join(",", compact(var.lb_cidr_blocks)) : var.vpc_cidr)}"]
   subnet_ids         = ["${var.subnet_ids}"]
-  is_internal_lb     = "${!var.public}"
-  use_lb_cert        = "${var.use_lb_cert}"
+  lb_internal        = "${var.lb_internal}"
+  lb_use_cert        = "${var.lb_use_cert}"
   lb_cert            = "${var.lb_cert}"
   lb_private_key     = "${var.lb_private_key}"
   lb_cert_chain      = "${var.lb_cert_chain}"
@@ -147,10 +159,10 @@ module "nomad_lb_aws" {
   create             = "${var.create}"
   name               = "${var.name}"
   vpc_id             = "${var.vpc_id}"
-  cidr_blocks        = ["${split(",", length(compact(var.cidr_blocks)) > 0 ? join(",", compact(var.cidr_blocks)) : var.vpc_cidr)}"]
+  cidr_blocks        = ["${split(",", length(compact(var.lb_cidr_blocks)) > 0 ? join(",", compact(var.lb_cidr_blocks)) : var.vpc_cidr)}"]
   subnet_ids         = ["${var.subnet_ids}"]
-  is_internal_lb     = "${!var.public}"
-  use_lb_cert        = "${var.use_lb_cert}"
+  lb_internal        = "${var.lb_internal}"
+  lb_use_cert        = "${var.lb_use_cert}"
   lb_cert            = "${var.lb_cert}"
   lb_private_key     = "${var.lb_private_key}"
   lb_cert_chain      = "${var.lb_cert_chain}"
