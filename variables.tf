@@ -10,7 +10,7 @@ variable "name" {
 
 variable "ami_owner" {
   description = "Account ID of AMI owner."
-  default     = "012230895537"
+  default     = "012230895537" # HashiCorp Public AMI AWS account
 }
 
 variable "release_version" {
