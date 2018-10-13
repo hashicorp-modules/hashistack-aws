@@ -12,6 +12,7 @@ module "consul_auto_join_instance_role" {
 data "aws_ami" "hashistack" {
   count       = "${var.create && var.image_id == "" ? 1 : 0}"
   most_recent = true
+  owners      = ["${var.ami_owner}"]
   name_regex  = "hashistack-image_${lower(var.release_version)}_nomad_${lower(var.nomad_version)}_vault_${lower(var.vault_version)}_consul_${lower(var.consul_version)}_${lower(var.os)}_${var.os_version}.*"
 
   filter {
